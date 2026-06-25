@@ -1,39 +1,172 @@
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>Word Garden</title>
 
 <style>
-body {
+
+body{
     font-family: Georgia, serif;
-    background: #eef5f1;
-    padding: 40px;
-    text-align: center;
+    background:#eef5f1;
+    padding:30px;
+    text-align:center;
 }
 
-.word {
-    display: inline-block;
-    background: white;
-    border: 1px solid #999;
-    padding: 8px 12px;
-    margin: 8px;
-    box-shadow: 2px 2px 4px rgba(0,0,0,.15);
+h1{
+    color:#2f4f4f;
 }
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+#words{
+    margin-top:25px;
+}
+
+.word{
+    display:inline-block;
+    background:white;
+    border:1px solid #999;
+    padding:8px 12px;
+    margin:6px;
+    border-radius:4px;
+    box-shadow:2px 2px 4px rgba(0,0,0,.15);
+}
+
+.word:hover{
+    background:#fff8dc;
+}
+
+.small{
+    color:#666;
+    font-size:0.9em;
+}
+
 </style>
-
 </head>
 
 <body>
 
 <h1>🌿 Word Garden 🌿</h1>
 
-<p>Your first online poetry board.</p>
+<p>Create your own collection of interesting words.</p>
 
-<div class="word">lantern</div>
-<div class="word">aurora</div>
-<div class="word">thread</div>
-<div class="word">forest</div>
-<div class="word">ghost</div>
-<div class="word">violet</div>
+<button onclick="addWord()">Add Word</button>
+<button onclick="randomWord()">Random Word</button>
+
+<div id="words"></div>
+
+<p class="small">
+Tap a word to delete it.
+</p>
+
+<script>
+
+const starterWords = [
+"lantern",
+"aurora",
+"forest",
+"ghost",
+"violet",
+"thread",
+"moon",
+"dream"
+];
+
+const surpriseWords = [
+"threshold",
+"ember",
+"phosphorescence",
+"murmuration",
+"echo",
+"wander",
+"glimmer",
+"myth",
+"signal",
+"vigil",
+"firefly",
+"wild"
+];
+
+let words =
+JSON.parse(localStorage.getItem("wordGarden")) ||
+starterWords;
+
+function saveWords(){
+    localStorage.setItem(
+        "wordGarden",
+        JSON.stringify(words)
+    );
+}
+
+function renderWords(){
+
+    const container =
+        document.getElementById("words");
+
+    container.innerHTML = "";
+
+    words.forEach((word,index)=>{
+
+        const div =
+            document.createElement("div");
+
+        div.className = "word";
+        div.textContent = word;
+
+        div.onclick = ()=>{
+
+            if(confirm(
+                "Delete '" + word + "'?"
+            )){
+                words.splice(index,1);
+                saveWords();
+                renderWords();
+            }
+        };
+
+        container.appendChild(div);
+    });
+}
+
+function addWord(){
+
+    const word =
+        prompt("Enter a new word");
+
+    if(!word) return;
+
+    words.push(word.trim());
+
+    saveWords();
+    renderWords();
+}
+
+function randomWord(){
+
+    const word =
+        surpriseWords[
+            Math.floor(
+                Math.random() *
+                surpriseWords.length
+            )
+        ];
+
+    words.push(word);
+
+    saveWords();
+    renderWords();
+}
+
+renderWords();
+
+</script>
 
 </body>
 </html>
